@@ -31,7 +31,7 @@ export function Home() {
 
                 </div>
 
-                <div className="bg-[#F6EDFF] relative z-[-3]">
+                <div className="bg-[#F6EDFF] relative z-[-3] flex flex-col">
                     <section className="selector flex justify-between p-3 mt-3">
                         <button className="bg-white p-2 font-bold rounded-md w-[100px] flex items-center justify-center">Today</button>
                         <button className="bg-white p-2 font-bold rounded-md w-[100px] flex items-center justify-center">Tomorrow</button>
@@ -39,31 +39,78 @@ export function Home() {
                     </section>
 
                     
+                    <div className="WeatherStadistics grid grid-cols-2 gap-4 p-4">
+                        <div className="bg-[#EBDEFF] p-2 rounded-xl">
+
+                            <h1>Wind Speed</h1>
+                            <p>12 Km/h</p>
+                        </div>
+
+                        <div className="bg-[#EBDEFF] p-2 rounded-xl">
+                            <h1>Rain Chance</h1>
+                            <p>12 Km/h</p>
+                        </div>
+
+                        <div className="bg-[#EBDEFF] p-2 rounded-xl">
+                            <h1>Rain Chance</h1>
+                            <p>12 Km/h</p>
+                        </div>
+
+                        <div className="bg-[#EBDEFF] p-2 rounded-xl">
+                            <h1>Rain Chance</h1>
+                            <p>12 Km/h</p>
+                        </div>
+
+
+
+                    </div>
+
+                    <div className="flex flex-col gap-3 items-center justify-center">
+
+                        <div className="HourlyForecast bg-[#EBDEFF] h-[150px] p-2 w-[93%] rounded-lg">
+                            <div>
+
+                                <h1>Hourly Forecast</h1>
+                            </div>
+
+
+                        </div>
+
+                        <div className="DayForecast bg-[#EBDEFF] h-[200px] p-2 w-[93%] rounded-lg">
+                            <div>
+
+                                <h1>Day Forecast</h1>
+                            </div>
+
+
+                        </div>
+
+                        <div className="DayForecast bg-[#EBDEFF] h-[200px] p-2 w-[93%] rounded-lg">
+                            <div>
+
+                                <h1>Chance of rain</h1>
+                            </div>
+
+
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 flex justify-between">
+                            <div className="bg-[#EBDEFF] w-[180px] p-2 rounded-lg">
+                                <h1>Sunrise</h1>
+                                <p>4:20 A.M</p>
+                            </div>
+
+                            <div className="bg-[#EBDEFF] w-[180px] p-2 rounded-lg">
+                                <h1>Sunset</h1>
+                                <p>4:50 P.M</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    
                 </div>
 
-                <div className="WeatherStadistics grid grid-cols-2">
-                    <div className="bg-[#EBDEFF]">
-
-                        <h1>Wind Speed</h1>
-                        <p>12 Km/h</p>
-                    </div>
-
-                    <div className="bg-[#EBDEFF]">
-                        <h1>Rain Chance</h1>
-                        <p>12 Km/h</p>
-                    </div>
-
-                    <div className="bg-[#EBDEFF]">
-
-                    </div>
-
-                    <div className="bg-[#EBDEFF]">
-
-                    </div>
-
-
-
-                </div>
 
 
         </main>
