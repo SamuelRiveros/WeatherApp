@@ -38,11 +38,23 @@ export function Home() {
 
     //------------------------------------//
 
+    // Parte del header //
 
     const [Location, setLocation] = useState(null)
     const [Region, setRegion] = useState(null)
     const [LocalTime, setLocalTime] = useState(null)
     const [FeelsLike, setFeelsLike] = useState(null)
+    const [IsDay, setIsDay] = useState(null)
+
+    const [Temp, setTemp] = useState(null)
+    // 4 recuadros superiores //
+
+    const [windSpeed, setWindSpeed] = useState(null);
+    const [rainChance, setRainChance] = useState(null);
+    const [pressure, setPressure] = useState(null);
+    const [uvIndex, setUvIndex] = useState(null);
+
+
 
     const [error, setError] = useState(null);
 
@@ -53,21 +65,29 @@ export function Home() {
 
         const fetchData = async () => {
             try {
-                const response = await fetch(''); // Api aquí
+                const response = await fetch('http://api.weatherapi.com/v1/current.json?key=a535072b6ae44480856115549242110&q=Floridablanca&lang=es'); // Api aquí
                 if (!response.ok) {
                     throw new Error('Error en la red');
                 }
                 const data = await response.json();
+                setTemp(data.current.temp_c)
                 setLocation(data.location.name); //* Guardamos el nombre de la ubicación en el estado
                 setRegion(data.location.region) //* Guardamos el nombre de la región en el estado
                 setLocalTime(data.location.localtime) //* Guardamos la hora la cual define la API en el estado
                 setFeelsLike(data.current.feelslike_c) //* Guardamos el nombre del valor feelslike_c ( celcius ) en el estado 
+                setIsDay(data.current.is_day)
+
+                // 4 recuadros ---
+                setWindSpeed(data.current.wind_kph); // Velocidad del viento en km/h
+                setRainChance(data.current.precip_mm); // Probabilidad de lluvia en mm
+                setPressure(data.current.pressure_mb); // Presión en hPa
+                setUvIndex(data.current.uv); // Índice UV
             } catch (error) {
                 setError(error.message);
             }
         };
 
-        // fetchData();
+        fetchData();
 
         // - - - - - - Scrolleo - - - - - - //
         
@@ -90,14 +110,14 @@ export function Home() {
             <div className={`MainHeader z-[2] text-white flex flex-col p-3 fixed top-0 left-0 right-0 transition-all ${scrolled ? 'bg-[#E1D3FA] backdrop-blur-md justify-start h-[220px] text-black' : 'bg-transparent justify-around h-[400px]'}`}>
 
                     <div className="flex justify-between p-3 items-center">
-                        <h1 className={`text-xl`}>{}, Santander</h1>
+                        <h1 className={`text-xl`}>{Location !== null ? `${Location}` : 'Cargando...'}, {Region !== null ? `${Region}`: `Cargando. . .`}</h1>
                         <svg xmlns="http://www.w3.org/2000/svg" width="2em" viewBox="0 0 24 24"><path className={`${scrolled ? 'fill-black' : 'fill-white'}`} d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>
                     </div>
 
                     <div className="MainWeather flex items-center justify-between">
                         <div>
-                            <p className="text-8xl">3°</p>
-                            <div className="feels">Feels like -2°</div>
+                            <p className="text-8xl">{Temp !== null ? `${Temp}°` : 'Cargando...'}</p>
+                            <div className="feels">{FeelsLike !== null ? `Feels like ${FeelsLike}` : 'Cargando...'}</div>
 
                         </div>
 
@@ -109,9 +129,9 @@ export function Home() {
                     </div>
 
                     <div className={`flex items-center justify-between ${scrolled ? 'hidden' : 'block'} transition-opacity`}>
-                        <p>January 18, 16:14</p>
+                        <p>{LocalTime}</p>
                         <div>
-                            <p>Day</p>
+                            <p>{IsDay === null ? 'Cargando...' : (IsDay === 1 ? 'Día' : 'Noche')}</p>
                             <p>Night -1°</p>
                         </div>
                     </div>
@@ -135,7 +155,7 @@ export function Home() {
 
                             <div className="flex flex-col">
                                 <p className="text-sm">Wind Speed</p>
-                                <p>12 Km/h</p>
+                                <p>{windSpeed !==null ? `${windSpeed} Km/h` : `Cargando. . .` } </p>
 
                             </div>
                         </div>
@@ -148,7 +168,7 @@ export function Home() {
 
                             <div className="flex flex-col">
                                 <p className="text-sm">Rain Chance</p>
-                                <p>24%</p>
+                                <p>{rainChance !== null ? `${rainChance}%` : 'Cargando...'}</p>
 
                             </div>
 
@@ -162,7 +182,7 @@ export function Home() {
 
                             <div className="flex flex-col">
                                 <p className="text-sm">Pressure</p>
-                                <p>720 hpa</p>
+                                <p>{pressure !== null ? `${pressure} hPa` : 'Cargando...'}</p>
 
                             </div>
                         </div>
@@ -175,7 +195,7 @@ export function Home() {
 
                             <div className="flex flex-col">
                                 <p className="text-sm">UV Index</p>
-                                <p>2,3</p>
+                                <p>{uvIndex !== null ? uvIndex.toFixed(1) : 'Cargando...'}</p>
 
                             </div>
                         </div>
