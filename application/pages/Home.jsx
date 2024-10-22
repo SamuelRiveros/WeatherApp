@@ -1,34 +1,97 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 export function Home() {
 
-    //Funcionalidad del scrolleo hacia abajo
+    //------------Scrolleo hacia abajo-------------//
 
     const [scrolled, setScrolled] = useState(false);
 
+    //- Boton Activo -//
+
+    const [activeButton, setActiveButton] = useState(null);
+
+    //---------Ref Scroll a 10 days---------//
+
+    const tenDaysRef = useRef(null);
+    const TodayRef = useRef(null)
+    
+    //------------------------------------//
+
     const handleScroll = () => {
         const scrollPosition = window.scrollY;
-        setScrolled(scrollPosition > 60); 
+        setScrolled(scrollPosition > 150); 
     };
 
+    const scrollToTenDays = () => {
+        if (tenDaysRef.current) {
+            console.log("scroll a 10 days")
+            tenDaysRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    const scrollToToday = () => {
+        if (TodayRef.current) {
+            console.log("scroll a today")
+            TodayRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    //------------------------------------//
+
+
+    const [Location, setLocation] = useState(null)
+    const [Region, setRegion] = useState(null)
+    const [LocalTime, setLocalTime] = useState(null)
+    const [FeelsLike, setFeelsLike] = useState(null)
+
+    const [error, setError] = useState(null);
+
+
+
     useEffect(() => {
+        // Fetcheo de Datos - - Current - -
+
+        const fetchData = async () => {
+            try {
+                const response = await fetch(''); // Api aquí
+                if (!response.ok) {
+                    throw new Error('Error en la red');
+                }
+                const data = await response.json();
+                setLocation(data.location.name); //* Guardamos el nombre de la ubicación en el estado
+                setRegion(data.location.region) //* Guardamos el nombre de la región en el estado
+                setLocalTime(data.location.localtime) //* Guardamos la hora la cual define la API en el estado
+                setFeelsLike(data.current.feelslike_c) //* Guardamos el nombre del valor feelslike_c ( celcius ) en el estado 
+            } catch (error) {
+                setError(error.message);
+            }
+        };
+
+        // fetchData();
+
+        // - - - - - - Scrolleo - - - - - - //
+        
         window.addEventListener('scroll', handleScroll);
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
+
+        
     }, []);
+
+
 
 
     return(
         <main className="h-[100vh]">
 
-            <img src="/headerimg.png" className="rounded-b-3xl w-full absolute z-[-2] top-0" />
+            <img src="/headerimg.png" className="rounded-b-3xl w-full absolute z-[1] top-0" />
 
-                <div className={`MainHeader text-white flex flex-col justify-around h-[400px] p-3 fixed top-0 left-0 right-0 transition-all ${scrolled ? 'bg-[#E1D3FA] backdrop-blur-md' : 'bg-transparent'}`}>
+            <div className={`MainHeader z-[2] text-white flex flex-col p-3 fixed top-0 left-0 right-0 transition-all ${scrolled ? 'bg-[#E1D3FA] backdrop-blur-md justify-start h-[220px] text-black' : 'bg-transparent justify-around h-[400px]'}`}>
 
                     <div className="flex justify-between p-3 items-center">
-                        <h1 className={`text-xl`}>Floridablanca, Santander</h1>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" viewBox="0 0 24 24"><path fill="#fff" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>
+                        <h1 className={`text-xl`}>{}, Santander</h1>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" viewBox="0 0 24 24"><path className={`${scrolled ? 'fill-black' : 'fill-white'}`} d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>
                     </div>
 
                     <div className="MainWeather flex items-center justify-between">
@@ -55,11 +118,11 @@ export function Home() {
 
                 </div>
 
-                <div className="bg-[#F6EDFF] relative z-[-3] flex flex-col mt-[400px]">
+                <div className="bg-[#F6EDFF] relative flex flex-col mt-[400px]">
                     <section className="selector flex justify-between p-3 mt-3">
-                        <button className="bg-white p-2 rounded-md w-[100px] flex items-center justify-center">Today</button>
+                        <button className="bg-white p-2 rounded-md w-[100px] flex items-center justify-center" onClick={scrollToToday}>Today</button>
                         <button className="bg-white p-2 rounded-md w-[100px] flex items-center justify-center">Tomorrow</button>
-                        <button className="bg-white p-2 rounded-md w-[100px] flex items-center justify-center">10 Days</button>
+                        <button className="bg-white p-2 rounded-md w-[100px] flex items-center justify-center" onClick={scrollToTenDays}>10 Days</button>
                     </section>
 
                     
@@ -67,7 +130,7 @@ export function Home() {
                         <div className="bg-[#EBDEFF] p-2 rounded-xl flex justify-center items-center gap-2">
 
                             <div className="bg-white p-2 rounded-full w-[30px] h-[30px] flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M6.25 5.5A3.25 3.25 0 1 1 9.5 8.75H3a.75.75 0 0 1 0-1.5h6.5A1.75 1.75 0 1 0 7.75 5.5v.357a.75.75 0 1 1-1.5 0zm8 2a4.25 4.25 0 1 1 4.25 4.25H2a.75.75 0 0 1 0-1.5h16.5a2.75 2.75 0 1 0-2.75-2.75V8a.75.75 0 0 1-1.5 0zm-11 6.5a.75.75 0 0 1 .75-.75h14.5a4.25 4.25 0 1 1-4.25 4.25V17a.75.75 0 0 1 1.5 0v.5a2.75 2.75 0 1 0 2.75-2.75H4a.75.75 0 0 1-.75-.75" clip-rule="evenodd"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fillRule="evenodd" d="M6.25 5.5A3.25 3.25 0 1 1 9.5 8.75H3a.75.75 0 0 1 0-1.5h6.5A1.75 1.75 0 1 0 7.75 5.5v.357a.75.75 0 1 1-1.5 0zm8 2a4.25 4.25 0 1 1 4.25 4.25H2a.75.75 0 0 1 0-1.5h16.5a2.75 2.75 0 1 0-2.75-2.75V8a.75.75 0 0 1-1.5 0zm-11 6.5a.75.75 0 0 1 .75-.75h14.5a4.25 4.25 0 1 1-4.25 4.25V17a.75.75 0 0 1 1.5 0v.5a2.75 2.75 0 1 0 2.75-2.75H4a.75.75 0 0 1-.75-.75" clipRule="evenodd"/></svg>
                             </div>
 
                             <div className="flex flex-col">
@@ -127,7 +190,7 @@ export function Home() {
                             <div className="flex">
 
                                 <div className="flex bg-white p-2 rounded-full w-[30px] h-[30px] items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9 0l2 3m-2-8v5"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9 0l2 3m-2-8v5"/></svg>
                                 </div>
                                 <h1 className="pl-3">Hourly Forecast</h1>
 
@@ -136,7 +199,7 @@ export function Home() {
 
                         </div>
 
-                        <div className="DayForecast bg-[#EBDEFF] h-[200px] p-2 w-[93%] rounded-lg">
+                        <div className="DayForecast bg-[#EBDEFF] h-[200px] p-2 w-[93%] rounded-lg" ref={TodayRef}>
                             <div className="flex">
                                 <div className="flex bg-white p-2 rounded-full w-[30px] h-[30px] items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
@@ -173,7 +236,7 @@ export function Home() {
                             <div className="bg-[#EBDEFF] w-[180px] p-2 rounded-lg flex justify-center items-center">
 
                                 <div className="bg-white p-2 rounded-full w-[30px] h-[30px] items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10V2m-7.07 8.93l1.41 1.41M2 18h2m16 0h2m-2.93-7.07l-1.41 1.41M22 22H2M16 6l-4 4l-4-4m8 12a4 4 0 0 0-8 0"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10V2m-7.07 8.93l1.41 1.41M2 18h2m16 0h2m-2.93-7.07l-1.41 1.41M22 22H2M16 6l-4 4l-4-4m8 12a4 4 0 0 0-8 0"/></svg>
                                 </div>
 
                                 <div className="pl-3">
@@ -187,25 +250,25 @@ export function Home() {
 
                     </div>
 
-                    <div className="flex items-center justify-center">
+                    <div className="10days flex flex-col gap-5 items-center justify-center" ref={tenDaysRef}>
+                        
+                        <div className="bg-[#EBDEFF] w-[90%] h-[60px] p-1 rounded-lg flex justify-around items-center">
+                            <div>
+                                <p>Today</p>
+                                <p className="text-gray-500">Cloudy and Sunny</p>
+                            </div>
 
-                    <div className="bg-[#EBDEFF] w-[90%] h-[60px] p-1 rounded-lg flex justify-around items-center">
-                        <div>
-                            <p>Today</p>
-                            <p className="text-gray-500">Cloudy and Sunny</p>
+                            <div>
+                                <p>3°</p>
+                                <p>-2°</p>
+                            </div>
+
+                            <div className="separator bg-black h-[30px] w-[1px]"></div>
+
+                            <div>
+                                <img src="/gray cloud and sun.png" alt="" />
+                            </div>
                         </div>
-
-                        <div>
-                            <p>3°</p>
-                            <p>-2°</p>
-                        </div>
-
-                        <div className="separator bg-black h-[30px] w-[1px]"></div>
-
-                        <div>
-                            <img src="/gray cloud and sun.png" alt="" />
-                        </div>
-                    </div>
 
                     </div>
                     
