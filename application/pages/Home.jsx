@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-export function Home() {
+import DayForecast from '../components/dayForecast';
 
+export function Home() {
+    
     //------------Scrolleo hacia abajo-------------//
 
     const [scrolled, setScrolled] = useState(false);
@@ -63,6 +65,10 @@ export function Home() {
 
     const [chanceOfRain, setChanceOfRain] = useState([]);
 
+    // Temperaturas para el dayForecast
+
+    const [temperatures, setTemperatures] = useState([]);
+
 
     const [error, setError] = useState(null);
 
@@ -73,7 +79,7 @@ export function Home() {
 
         const fetchData = async () => {
             try {
-                const response = await fetch('http://api.weatherapi.com/v1/forecast.json?key=a535072b6ae44480856115549242110&q=Floridablanca&days=1&lang=es'); // Api aquí
+                const response = await fetch('http://api.weatherapi.com/v1/forecast.json?key=a535072b6ae44480856115549242110&q=Floridablanca&days=7&lang=es'); // Api aquí
                 if (!response.ok) {
                     throw new Error('Error en la red');
                 }
@@ -98,6 +104,9 @@ export function Home() {
 
                 // Chance of rain Aquí
                 setChanceOfRain(data.forecast.forecastday[0].hour); // Almacena las horas del día
+
+                setTemperatures(data.forecast.forecastday.map(day => day.day.avgtemp_c));
+
 
 
             } catch (error) {
@@ -236,16 +245,8 @@ export function Home() {
 
 
                         </div>
-
-                        <div className="DayForecast bg-[#EBDEFF] h-[200px] p-2 w-[93%] rounded-lg" ref={TodayRef}>
-                            <div className="flex">
-                                <div className="flex bg-white p-2 rounded-full w-[30px] h-[30px] items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
-                                </div>
-                                <h1 className="pl-3">Day Forecast</h1>
-
-                            </div>
-                        </div>
+                        
+                        <DayForecast ref={TodayRef} temperatures={temperatures}/>
 
                         <div className="ChanceOfRain bg-[#EBDEFF] h-[200px] p-2 w-[93%] rounded-lg">
                             <div className="flex">
