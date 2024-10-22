@@ -311,26 +311,43 @@ export function Home() {
                     </div>
 
                     <div className="10days flex flex-col gap-5 items-center justify-center" ref={tenDaysRef}>
-                        
-                        <div className="bg-[#EBDEFF] w-[90%] h-[60px] p-1 rounded-lg flex justify-around items-center">
-                            <div>
-                                <p>Today</p>
-                                <p className="text-gray-500">Cloudy and Sunny</p>
-                            </div>
+                        {Array.from({ length: 10 }).map((_, index) => {
+                            const images = [
+                                "/gray cloud and sun.png",
+                                "/cloud and sun 1.png",
+                                "/cloud.png"
+                            ];
+                            const randomImage = images[Math.floor(Math.random() * images.length)];
 
-                            <div>
-                                <p>3°</p>
-                                <p>-2°</p>
-                            </div>
+                            const date = new Date(2023, 9, 22); // Octubre es el mes 9 (0-indexed)
+                            date.setDate(date.getDate() + index); // Sumar días
 
-                            <div className="separator bg-black h-[30px] w-[1px]"></div>
+                            const options = { weekday: 'long' };
+                            const dayName = date.toLocaleDateString('es-ES', options); // Nombre del día en español
 
-                            <div>
-                                <img src="/gray cloud and sun.png" alt="" />
-                            </div>
-                        </div>
-
+                            return (
+                                <div key={index} className="bg-[#EBDEFF] w-[90%] h-[60px] p-1 rounded-lg flex justify-around items-center">
+                                    <div>
+                                        <p>{dayName}</p>
+                                        <p className="text-gray-500">Cloudy and Sunny</p>
+                                    </div>
+                                    <div>
+                                        <p>3°</p>
+                                        <p>-2°</p>
+                                    </div>
+                                    <div className="separator bg-black h-[30px] w-[1px]"></div>
+                                    <div>
+                                        <img 
+                                            src={randomImage} 
+                                            alt="" 
+                                            style={{ width: randomImage === "/cloud and sun 1.png" ? '50px' : 'auto' }} 
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
+
                     
                 </div>
 
