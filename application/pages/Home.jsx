@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import DayForecast from '../components/dayForecast';
 
+import HourlyForecast from '../components/hourlyForecast';
+
 export function Home() {
     
     //------------Scrolleo hacia abajo-------------//
@@ -66,8 +68,10 @@ export function Home() {
     const [chanceOfRain, setChanceOfRain] = useState([]);
 
     // Temperaturas para el dayForecast
-
     const [temperatures, setTemperatures] = useState([]);
+
+    //Hourly Forecast
+    const [hourlyForecast, setHourlyForecast] = useState([]);
 
 
     const [error, setError] = useState(null);
@@ -105,9 +109,19 @@ export function Home() {
                 // Chance of rain Aquí
                 setChanceOfRain(data.forecast.forecastday[0].hour); // Almacena las horas del día
 
+                //Temperaturas del dailyForecast
                 setTemperatures(data.forecast.forecastday.map(day => day.day.avgtemp_c));
 
+                //Logica para el HourlyForecast
 
+                const hours = data.forecast.forecastday[0].hour.map(hour => ({
+                    time: hour.time.slice(-5), // Formato HH:MM
+                    temp: hour.temp_c,
+                    condition: hour.condition.text // Esto puede ser útil para determinar la imagen
+                }));
+
+                //*Lo setteamos
+                setHourlyForecast(hours);
 
             } catch (error) {
                 setError(error.message);
@@ -233,18 +247,7 @@ export function Home() {
 
                     <div className="flex flex-col gap-3 items-center justify-center">
 
-                        <div className="HourlyForecast bg-[#EBDEFF] h-[150px] p-2 w-[93%] rounded-lg">
-                            <div className="flex">
-
-                                <div className="flex bg-white p-2 rounded-full w-[30px] h-[30px] items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9 0l2 3m-2-8v5"/></svg>
-                                </div>
-                                <h1 className="pl-3">Hourly Forecast</h1>
-
-                            </div>
-
-
-                        </div>
+                        <HourlyForecast hourlyForecast={hourlyForecast} />
                         
                         <DayForecast ref={TodayRef} temperatures={temperatures}/>
 

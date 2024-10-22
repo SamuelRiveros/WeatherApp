@@ -20,8 +20,8 @@ const DayForecast = forwardRef(({ temperatures }, ref) => {
                 fill: true,
                 backgroundColor: 'rgba(0, 0, 0, 0.2)',
                 borderColor: 'rgba(0, 0, 0, 1)',
-                tension: 0.3,
-                pointRadius: 0,
+                tension: 0.6,
+                pointRadius: 4,
             },
         ],
     };
