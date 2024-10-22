@@ -45,8 +45,8 @@ export function Home() {
     const [LocalTime, setLocalTime] = useState(null)
     const [FeelsLike, setFeelsLike] = useState(null)
     const [IsDay, setIsDay] = useState(null)
-
     const [Temp, setTemp] = useState(null)
+
     // 4 recuadros superiores //
 
     const [windSpeed, setWindSpeed] = useState(null);
@@ -54,6 +54,14 @@ export function Home() {
     const [pressure, setPressure] = useState(null);
     const [uvIndex, setUvIndex] = useState(null);
 
+    // Sunset y Sunrise //
+
+    const [sunrise, setSunrise] = useState(null);
+    const [sunset, setSunset] = useState(null);
+
+    // Chance de lluvias
+
+    const [chanceOfRain, setChanceOfRain] = useState([]);
 
 
     const [error, setError] = useState(null);
@@ -65,7 +73,7 @@ export function Home() {
 
         const fetchData = async () => {
             try {
-                const response = await fetch('http://api.weatherapi.com/v1/current.json?key=a535072b6ae44480856115549242110&q=Floridablanca&lang=es'); // Api aquí
+                const response = await fetch('http://api.weatherapi.com/v1/forecast.json?key=a535072b6ae44480856115549242110&q=Floridablanca&days=1&lang=es'); // Api aquí
                 if (!response.ok) {
                     throw new Error('Error en la red');
                 }
@@ -82,6 +90,16 @@ export function Home() {
                 setRainChance(data.current.precip_mm); // Probabilidad de lluvia en mm
                 setPressure(data.current.pressure_mb); // Presión en hPa
                 setUvIndex(data.current.uv); // Índice UV
+
+                // Sunset y Sunrise - astro
+
+                setSunrise(data.forecast.forecastday[0].astro.sunrise);
+                setSunset(data.forecast.forecastday[0].astro.sunset);
+
+                // Chance of rain Aquí
+                setChanceOfRain(data.forecast.forecastday[0].hour); // Almacena las horas del día
+
+
             } catch (error) {
                 setError(error.message);
             }
@@ -107,7 +125,7 @@ export function Home() {
 
             <img src="/headerimg.png" className="rounded-b-3xl w-full absolute z-[1] top-0" />
 
-            <div className={`MainHeader z-[2] text-white flex flex-col p-3 fixed top-0 left-0 right-0 transition-all ${scrolled ? 'bg-[#E1D3FA] backdrop-blur-md justify-start h-[220px] text-black' : 'bg-transparent justify-around h-[400px]'}`}>
+            <div className={`MainHeader z-[2] flex flex-col p-3 fixed top-0 left-0 right-0 transition-all ${scrolled ? 'bg-[#E1D3FA] backdrop-blur-md justify-start h-[220px] text-black' : 'bg-transparent justify-around h-[400px] text-white'}`}>
 
                     <div className="flex justify-between p-3 items-center">
                         <h1 className={`text-xl`}>{Location !== null ? `${Location}` : 'Cargando...'}, {Region !== null ? `${Region}`: `Cargando. . .`}</h1>
@@ -235,8 +253,26 @@ export function Home() {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" viewBox="0 0 56 56"><path fill="currentColor" d="M12.262 36.473h29.086c7.687 0 13.406-5.836 13.406-13.078c0-7.454-6.094-12.914-14.04-12.914C37.786 4.69 32.349.964 25.575.964c-8.812 0-16.078 6.89-16.851 15.61c-4.243 1.218-7.477 4.921-7.477 9.866c0 5.532 4.031 10.032 11.016 10.032m-.047-3.774c-4.805 0-7.219-2.672-7.219-6.14c0-2.836 1.64-5.368 5.625-6.422c1.29-.328 1.758-.938 1.875-2.274c.54-7.64 6.281-13.148 13.078-13.148c5.274 0 9.422 2.883 11.953 8.086c.54 1.125 1.242 1.523 2.625 1.523c6.938 0 10.852 4.196 10.852 9.188c0 5.11-4.078 9.187-9.422 9.187Zm19.078 14.719l3.047-5.273c.422-.727.187-1.547-.516-1.946c-.703-.422-1.5-.187-1.922.54l-3.093 5.32c-.375.68-.188 1.5.539 1.922a1.43 1.43 0 0 0 1.945-.563m5.437 6.703l6.915-12c.421-.703.21-1.5-.47-1.922c-.655-.398-1.5-.187-1.945.516l-6.867 11.953c-.398.727-.21 1.547.492 1.969c.68.375 1.477.164 1.875-.516m-24.093-6.68l3.047-5.273c.421-.727.21-1.547-.493-1.945c-.726-.422-1.523-.188-1.945.539l-3.07 5.32c-.399.68-.188 1.5.515 1.898a1.403 1.403 0 0 0 1.946-.539m5.437 6.703l6.938-12c.398-.703.187-1.5-.47-1.921a1.4 1.4 0 0 0-1.944.515L15.708 52.69c-.398.727-.187 1.547.516 1.97c.68.374 1.476.163 1.851-.517"/></svg>
                                 </div>
                                 <h1 className="pl-3">Chance of rain</h1>
+                            </div>
+
+                            <div className='flex flex-col justify-center pt-3'>
+
+                                {chanceOfRain.length > 0 ? (
+                                    chanceOfRain.slice(7, 11).map((hourData, index) => (
+                                        <div key={index} className="flex items-center mb-2">
+                                            <div className="w-1/4 pl-3">{hourData.time.split(' ')[1]}h</div>
+                                            <div className="w-2/4 bg-gray-300 h-4 rounded">
+                                                <div className="h-full bg-blue-500" style={{ width: `${hourData.chance_of_rain}%` }}></div>
+                                            </div>
+                                            <div className="w-1/4 text-right pr-3">{hourData.chance_of_rain}%</div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>Cargando...</p>
+                                )}
 
                             </div>
+
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 flex justify-between pb-5">
@@ -248,7 +284,7 @@ export function Home() {
 
                                 <div className="pl-3">
                                     <h1>Sunrise</h1>
-                                    <p className="font-bold">4:20 A.M</p>
+                                    <p className="font-bold">{sunrise !== null ? sunrise : 'Cargando...'}</p>
 
                                 </div>
                             </div>
@@ -261,7 +297,7 @@ export function Home() {
 
                                 <div className="pl-3">
                                     <h1>Sunset</h1>
-                                    <p className="font-bold">4:50 P.M</p>
+                                    <p className="font-bold">{sunset !== null ? sunset : 'Cargando...'}</p>
 
                                 </div>
                             </div>
